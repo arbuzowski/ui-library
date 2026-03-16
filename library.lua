@@ -213,7 +213,7 @@ do
             draw.Text = textContent
             draw.Outline = textOutline
             draw.Font = textFontFace or self._font_face
-            draw.Size = textSize or self._font_size
+            draw.FontSize = textSize or self._font_size
         elseif drawType == 'line' then
             if not draw then
                 self._drawings[drawId] = Drawing.new('Line')
