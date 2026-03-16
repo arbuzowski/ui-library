@@ -760,6 +760,7 @@ do
         local menuTitle = self._custom_title_enabled and self._custom_title or self.title
 
         -- input processing
+        setrobloxinput(true)
         for keycode, inputData in pairs(self._inputs) do
             local keycodeId = inputData.id
             local interacted = iskeypressed(keycodeId)
