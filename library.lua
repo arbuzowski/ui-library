@@ -6,7 +6,7 @@
 ]]
 
 UILib = {
-    _font_face = Drawing.Fonts.Plex,
+    _font_face = Drawing.Fonts.UI,
     _font_size = 13,
     _drawings = {},
     _tree = {},
@@ -40,19 +40,16 @@ UILib = {
     _padding = 8,
     _tab_h = 40,
     _theming = {
-        ["Accent"] = Color3.fromRGB(150, 100, 150),
-        ["Window Background"] = Color3.fromRGB(35, 30, 35),
-        ["Window Border"] = Color3.fromRGB(50, 45, 50),
-        ["Tab Background"] = Color3.fromRGB(25, 20, 25),
-        ["Tab Border"] = Color3.fromRGB(65, 45, 65),
-        ["Tab Toggle Background"] = Color3.fromRGB(35, 30, 35),
-        ["Section Background"] = Color3.fromRGB(25, 20, 25),
-        ["Section Border"] = Color3.fromRGB(55, 35, 55),
-        ["Text"] = Color3.fromRGB(200, 180, 200),
-        ["Disabled Text"] = Color3.fromRGB(120, 100, 120),
-        ["Object Background"] = Color3.fromRGB(30, 25, 30),
-        ["Object Border"] = Color3.fromRGB(40, 35, 40),
-        ["Dropdown Option Background"] = Color3.fromRGB(25, 20, 25)
+        accent = Color3.fromRGB(0, 128, 255),
+        unsafe = Color3.fromRGB(255, 255, 51),
+        body = Color3.fromRGB(5, 5, 5),
+        text = Color3.fromRGB(255, 255, 255),
+        subtext = Color3.fromRGB(120, 120, 120),
+        border1 = Color3.fromRGB(40, 40, 40),
+        border0 = Color3.fromRGB(32, 32, 32),
+        surface1 = Color3.fromRGB(42, 42, 42),
+        surface0 = Color3.fromRGB(24, 24, 24),
+        crust = Color3.fromRGB(0, 0, 0),
     },
 }
 
@@ -64,14 +61,6 @@ local function clamp(x, a, b)
     else
         return x
     end
-end
-
-local function changecolor(color, number)
-    local r = color.R * 255
-    local g = color.G * 255
-    local b = color.B * 255
-    r, g, b = math.clamp(r + number, 0, 255), math.clamp(g + number, 0, 255), math.clamp(b + number, 0, 255)
-    return Color3.fromRGB(r, g, b)
 end
 
 local function getDictLength(dict)
@@ -168,8 +157,6 @@ do
 
         if fontFace == Drawing.Fonts.UI then
             return Vector2.new(#text * fontSize * 0.53846, fontSize)
-        elseif fontFace == Drawing.Fonts.Plex then
-            return Vector2.new(#text * fontSize * 0.55, fontSize)
         end
 
         return Vector2.new(#text * fontSize, fontSize)
@@ -213,7 +200,7 @@ do
             draw.Text = textContent
             draw.Outline = textOutline
             draw.Font = textFontFace or self._font_face
-            draw.FontSize = textSize or self._font_size
+            draw.Size = textSize or self._font_size
         elseif drawType == 'line' then
             if not draw then
                 self._drawings[drawId] = Drawing.new('Line')
@@ -242,7 +229,7 @@ do
 
             if #args == 4 then
                 local firstColor = args[4]
-                local tintColor = self._theming["Window Background"]
+                local tintColor = self._theming.crust
 
                 table.insert(args, Color3.new(
                     self:_Lerp(firstColor.R, tintColor.R, 0.5),
@@ -447,7 +434,7 @@ do
             AddColorpicker = function(_, label, value, overwrite, callback)
                 local item = {
                     label = label,
-                    value = value or self._theming["Accent"],
+                    value = value or self._theming.accent,
                     overwrite = overwrite,
                     callback = callback
                 }
@@ -659,9 +646,9 @@ do
         end)
 
         local themingSection = settingsTab:Section('Theming')
-        local themes = {'Default', 'Midnight', 'AirHub'}
-        local themingTextColor, themingWindowBackgroundColor, themingAccentColor, themingDisabledTextColor, themingWindowBorderColor, themingTabBackgroundColor, themingTabBorderColor, themingTabToggleBackgroundColor, themingSectionBackgroundColor, themingSectionBorderColor, themingObjectBackgroundColor, themingObjectBorderColor, themingDropdownOptionBackgroundColor
-        local themingTheme = themingSection:Dropdown('Theme', themes[3], themes, false, function(newValue)
+        local themes = {'Default', 'Gamesense', 'Bitchbot'}
+        local themingTextColor, themingBodyColor, themingAccentColor, themingSubtextColor, themingBorder0Color, themingBorder1Color, themingSurface0Color, themingSurface1Color, themingCrustColor
+        local themingTheme = themingSection:Dropdown('Theme', themes[1], themes, false, function(newValue)
             if not newValue then
                 return
             end
@@ -669,117 +656,85 @@ do
             local theme = newValue[1]
             if theme == themes[1] then
                 -- default
-                themingAccentColor:Set(Color3.fromRGB(113, 93, 133))
-                themingWindowBackgroundColor:Set(Color3.fromRGB(30, 30, 30))
-                themingWindowBorderColor:Set(Color3.fromRGB(45, 45, 45))
-                themingTabBackgroundColor:Set(Color3.fromRGB(20, 20, 20))
-                themingTabBorderColor:Set(Color3.fromRGB(45, 45, 45))
-                themingTabToggleBackgroundColor:Set(Color3.fromRGB(28, 28, 28))
-                themingSectionBackgroundColor:Set(Color3.fromRGB(18, 18, 18))
-                themingSectionBorderColor:Set(Color3.fromRGB(35, 35, 35))
-                themingTextColor:Set(Color3.fromRGB(200, 200, 200))
-                themingDisabledTextColor:Set(Color3.fromRGB(110, 110, 110))
-                themingObjectBackgroundColor:Set(Color3.fromRGB(25, 25, 25))
-                themingObjectBorderColor:Set(Color3.fromRGB(35, 35, 35))
-                themingDropdownOptionBackgroundColor:Set(Color3.fromRGB(19, 19, 19))
+                themingAccentColor:Set(Color3.fromRGB(0, 128, 255))
+                themingBodyColor:Set(Color3.fromRGB(5, 5, 5))
+                themingTextColor:Set(Color3.fromRGB(255, 255, 255))
+                themingSubtextColor:Set(Color3.fromRGB(120, 120, 120))
+                themingBorder1Color:Set(Color3.fromRGB(40, 40, 40))
+                themingBorder0Color:Set(Color3.fromRGB(32, 32, 32))
+                themingSurface1Color:Set(Color3.fromRGB(42, 42, 42))
+                themingSurface0Color:Set(Color3.fromRGB(24, 24, 24))
+                themingCrustColor:Set(Color3.fromRGB(0, 0, 0))
             elseif theme == themes[2] then
-                -- midnight
-                themingAccentColor:Set(Color3.fromRGB(100, 59, 154))
-                themingWindowBackgroundColor:Set(Color3.fromRGB(30, 30, 36))
-                themingWindowBorderColor:Set(Color3.fromRGB(45, 45, 49))
-                themingTabBackgroundColor:Set(Color3.fromRGB(20, 20, 24))
-                themingTabBorderColor:Set(Color3.fromRGB(45, 45, 55))
-                themingTabToggleBackgroundColor:Set(Color3.fromRGB(28, 28, 32))
-                themingSectionBackgroundColor:Set(Color3.fromRGB(18, 18, 22))
-                themingSectionBorderColor:Set(Color3.fromRGB(35, 35, 45))
-                themingTextColor:Set(Color3.fromRGB(180, 180, 190))
-                themingDisabledTextColor:Set(Color3.fromRGB(100, 100, 110))
-                themingObjectBackgroundColor:Set(Color3.fromRGB(25, 25, 29))
-                themingObjectBorderColor:Set(Color3.fromRGB(35, 35, 39))
-                themingDropdownOptionBackgroundColor:Set(Color3.fromRGB(19, 19, 23))
+                -- gamesense
+                themingAccentColor:Set(Color3.fromRGB(114, 178, 21))
+                themingBodyColor:Set(Color3.fromRGB(0, 0, 0))
+                themingTextColor:Set(Color3.fromRGB(144, 144, 144))
+                themingSubtextColor:Set(Color3.fromRGB(59, 59, 59))
+                themingBorder1Color:Set(Color3.fromRGB(60, 60, 60))
+                themingBorder0Color:Set(Color3.fromRGB(48, 48, 48))
+                themingSurface1Color:Set(Color3.fromRGB(45, 45, 45))
+                themingSurface0Color:Set(Color3.fromRGB(26, 26, 26))
+                themingCrustColor:Set(Color3.fromRGB(0, 0, 0))
             elseif theme == themes[3] then
-                -- AirHub
-                themingAccentColor:Set(Color3.fromRGB(150, 100, 150))
-                themingWindowBackgroundColor:Set(Color3.fromRGB(35, 30, 35))
-                themingWindowBorderColor:Set(Color3.fromRGB(50, 45, 50))
-                themingTabBackgroundColor:Set(Color3.fromRGB(25, 20, 25))
-                themingTabBorderColor:Set(Color3.fromRGB(65, 45, 65))
-                themingTabToggleBackgroundColor:Set(Color3.fromRGB(35, 30, 35))
-                themingSectionBackgroundColor:Set(Color3.fromRGB(25, 20, 25))
-                themingSectionBorderColor:Set(Color3.fromRGB(55, 35, 55))
-                themingTextColor:Set(Color3.fromRGB(200, 180, 200))
-                themingDisabledTextColor:Set(Color3.fromRGB(120, 100, 120))
-                themingObjectBackgroundColor:Set(Color3.fromRGB(30, 25, 30))
-                themingObjectBorderColor:Set(Color3.fromRGB(40, 35, 40))
-                themingDropdownOptionBackgroundColor:Set(Color3.fromRGB(25, 20, 25))
+                -- bitchbot
+                themingAccentColor:Set(Color3.fromRGB(120, 85, 147))
+                themingBodyColor:Set(Color3.fromRGB(31, 31, 31))
+                themingTextColor:Set(Color3.fromRGB(202, 201, 201))
+                themingSubtextColor:Set(Color3.fromRGB(100, 100, 100))
+                themingBorder1Color:Set(Color3.fromRGB(53, 52, 52))
+                themingBorder0Color:Set(Color3.fromRGB(53, 52, 52))
+                themingSurface1Color:Set(Color3.fromRGB(41, 42, 40))
+                themingSurface0Color:Set(Color3.fromRGB(41, 42, 40))
+                themingCrustColor:Set(Color3.fromRGB(0, 0, 0))
             end
         end)
 
         local themingText = themingSection:Toggle('Text color')
-        themingTextColor = themingText:AddColorpicker('Text color', self._theming["Text"], true, function(newValue)
-            self._theming["Text"] = newValue
+        themingTextColor = themingText:AddColorpicker('Text color', self._theming.text, true, function(newValue)
+            self._theming.text = newValue
         end)
-        local themingWindowBackground = themingSection:Toggle('Window background color')
-        themingWindowBackgroundColor = themingWindowBackground:AddColorpicker('Window background color', self._theming["Window Background"], true, function(newValue)
-            self._theming["Window Background"] = newValue
+        local themingBody = themingSection:Toggle('Body color')
+        themingBodyColor = themingBody:AddColorpicker('Body color', self._theming.body, true, function(newValue)
+            self._theming.body = newValue
         end)
 
         local themingAccent = themingSection:Toggle('Accent color')
-        themingAccentColor = themingAccent:AddColorpicker('Accent color', self._theming["Accent"], true, function(newValue)
-            self._theming["Accent"] = newValue
+        themingAccentColor = themingAccent:AddColorpicker('Accent color', self._theming.accent, true, function(newValue)
+            self._theming.accent = newValue
         end)
 
-        local themingDisabledText = themingSection:Toggle('Disabled text color')
-        themingDisabledTextColor = themingDisabledText:AddColorpicker('Disabled text color', self._theming["Disabled Text"], true, function(newValue)
-            self._theming["Disabled Text"] = newValue
+        local themingSubtext = themingSection:Toggle('Subtext color')
+        themingSubtextColor = themingSubtext:AddColorpicker('Subtext color', self._theming.subtext, true, function(newValue)
+            self._theming.subtext = newValue
         end)
 
-        local themingWindowBorder = themingSection:Toggle('Window border color')
-        themingWindowBorderColor = themingWindowBorder:AddColorpicker('Window border color', self._theming["Window Border"], true, function(newValue)
-            self._theming["Window Border"] = newValue
+        local themingBorder0 = themingSection:Toggle('Border 0 color')
+        themingBorder0Color = themingBorder0:AddColorpicker('Border 0 color', self._theming.border0, true, function(newValue)
+            self._theming.border0 = newValue
         end)
 
-        local themingTabBackground = themingSection:Toggle('Tab background color')
-        themingTabBackgroundColor = themingTabBackground:AddColorpicker('Tab background color', self._theming["Tab Background"], true, function(newValue)
-            self._theming["Tab Background"] = newValue
+        local themingBorder1 = themingSection:Toggle('Border 1 color')
+        themingBorder1Color = themingBorder1:AddColorpicker('Border 1 color', self._theming.border1, true, function(newValue)
+            self._theming.border1 = newValue
         end)
 
-        local themingTabBorder = themingSection:Toggle('Tab border color')
-        themingTabBorderColor = themingTabBorder:AddColorpicker('Tab border color', self._theming["Tab Border"], true, function(newValue)
-            self._theming["Tab Border"] = newValue
+        local themingSurface0 = themingSection:Toggle('Surface 0 color')
+        themingSurface0Color = themingSurface0:AddColorpicker('Surface 0 color', self._theming.surface0, true, function(newValue)
+            self._theming.surface0 = newValue
         end)
 
-        local themingTabToggleBackground = themingSection:Toggle('Tab toggle background color')
-        themingTabToggleBackgroundColor = themingTabToggleBackground:AddColorpicker('Tab toggle background color', self._theming["Tab Toggle Background"], true, function(newValue)
-            self._theming["Tab Toggle Background"] = newValue
+        local themingSurface1 = themingSection:Toggle('Surface 1 color')
+        themingSurface1Color = themingSurface1:AddColorpicker('Surface 1 color', self._theming.surface1, true, function(newValue)
+            self._theming.surface1 = newValue
         end)
 
-        local themingSectionBackground = themingSection:Toggle('Section background color')
-        themingSectionBackgroundColor = themingSectionBackground:AddColorpicker('Section background color', self._theming["Section Background"], true, function(newValue)
-            self._theming["Section Background"] = newValue
+        local themingCrust = themingSection:Toggle('Crust color')
+        themingCrustColor = themingCrust:AddColorpicker('Crust color', self._theming.crust, true, function(newValue)
+            self._theming.crust = newValue
         end)
 
-        local themingSectionBorder = themingSection:Toggle('Section border color')
-        themingSectionBorderColor = themingSectionBorder:AddColorpicker('Section border color', self._theming["Section Border"], true, function(newValue)
-            self._theming["Section Border"] = newValue
-        end)
-
-        local themingObjectBackground = themingSection:Toggle('Object background color')
-        themingObjectBackgroundColor = themingObjectBackground:AddColorpicker('Object background color', self._theming["Object Background"], true, function(newValue)
-            self._theming["Object Background"] = newValue
-        end)
-
-        local themingObjectBorder = themingSection:Toggle('Object border color')
-        themingObjectBorderColor = themingObjectBorder:AddColorpicker('Object border color', self._theming["Object Border"], true, function(newValue)
-            self._theming["Object Border"] = newValue
-        end)
-
-        local themingDropdownOptionBackground = themingSection:Toggle('Dropdown option background color')
-        themingDropdownOptionBackgroundColor = themingDropdownOptionBackground:AddColorpicker('Dropdown option background color', self._theming["Dropdown Option Background"], true, function(newValue)
-            self._theming["Dropdown Option Background"] = newValue
-        end)
-
-        themingTheme:Set({'AirHub'})
+        themingTheme:Set({'Default'})
 
         return settingsTab, menuSection, themingSection
     end
@@ -805,7 +760,8 @@ do
         local menuTitle = self._custom_title_enabled and self._custom_title or self.title
 
         -- input processing
-        setrobloxinput(not self._menu_open)
+        local mouseOverMenu = self:_IsMouseWithinBounds(Vector2.new(self.x, self.y), Vector2.new(self.w, self.h))
+        setrobloxinput(not (self._menu_open and mouseOverMenu))
         for keycode, inputData in pairs(self._inputs) do
             local keycodeId = inputData.id
             local interacted = iskeypressed(keycodeId)
@@ -847,11 +803,11 @@ do
         local watermarkContent = table.concat(watermarkStates, ' | ')
         local watermarkSize = self:_GetTextBounds(watermarkContent) + Vector2.new(self._padding * 2, self._padding * 2)
         if self._watermark_enabled then
-            self:_Draw('watermark_crust', 'rect', self._theming["Window Background"], 102, watermarkPos, watermarkSize, false)
-            self:_Draw('watermark_border', 'rect', self._theming["Window Border"], 102, watermarkPos + Vector2.new(1, 1), watermarkSize - Vector2.new(2, 2), false)
-            self:_Draw('watermark_accent', 'line', self._theming["Accent"], 103, watermarkPos + Vector2.new(2, 2), watermarkPos + Vector2.new(watermarkSize.x - 2, 2))
-            self:_Draw('watermark_body', 'gradient', nil, 101, 'vertical', watermarkPos + Vector2.new(2, 2), watermarkSize - Vector2.new(4, 4), self._theming["Tab Background"])
-            self:_Draw('watermark_text', 'text', self._theming["Text"], 103, watermarkPos + Vector2.new(self._padding, self._padding + 2), watermarkContent, true)
+            self:_Draw('watermark_crust', 'rect', self._theming.crust, 102, watermarkPos, watermarkSize, false)
+            self:_Draw('watermark_border', 'rect', self._theming.border0, 102, watermarkPos + Vector2.new(1, 1), watermarkSize - Vector2.new(2, 2), false)
+            self:_Draw('watermark_accent', 'line', self._theming.accent, 103, watermarkPos + Vector2.new(2, 2), watermarkPos + Vector2.new(watermarkSize.x - 2, 2))
+            self:_Draw('watermark_body', 'gradient', nil, 101, 'vertical', watermarkPos + Vector2.new(2, 2), watermarkSize - Vector2.new(4, 4), self._theming.surface0)
+            self:_Draw('watermark_text', 'text', self._theming.text, 103, watermarkPos + Vector2.new(self._padding, self._padding + 2), watermarkContent, true)
         else
             self:_UndrawStartsWith('watermark_')
         end
@@ -872,11 +828,11 @@ do
             local notificationOrigin = notificationsOrigin + Vector2.new((-notificationSize.x - 50) * (1 - notificationFade), totalNotificationsHeight)
 
             local progressPercent = math.min((os.clock() - notification._spawned_at)/notification.time, 1)
-            self:_Draw(notificationDrawId .. '_crust', 'rect', self._theming["Window Background"], 102, notificationOrigin, notificationSize, false)
-            self:_Draw(notificationDrawId .. '_border', 'rect', self._theming["Window Border"], 102, notificationOrigin + Vector2.new(1, 1), notificationSize - Vector2.new(2, 2), false)
-            self:_Draw(notificationDrawId .. '_progress', 'gradient', nil, 103, 'horizontal', notificationOrigin + Vector2.new(2, notificationSize.y - 4), Vector2.new(notificationSize.x * progressPercent - 6, 2), {R=0, G=0, B=0, A=0}, self._theming["Accent"])
-            self:_Draw(notificationDrawId .. '_body', 'gradient', nil, 101, 'vertical', notificationOrigin + Vector2.new(2, 2), notificationSize - Vector2.new(4, 4), self._theming["Tab Background"])
-            self:_Draw(notificationDrawId .. '_text', 'text', self._theming["Text"], 103, notificationOrigin + Vector2.new(self._padding, self._padding + 2), notificationText, true)
+            self:_Draw(notificationDrawId .. '_crust', 'rect', self._theming.crust, 102, notificationOrigin, notificationSize, false)
+            self:_Draw(notificationDrawId .. '_border', 'rect', self._theming.border0, 102, notificationOrigin + Vector2.new(1, 1), notificationSize - Vector2.new(2, 2), false)
+            self:_Draw(notificationDrawId .. '_progress', 'gradient', nil, 103, 'horizontal', notificationOrigin + Vector2.new(2, notificationSize.y - 4), Vector2.new(notificationSize.x * progressPercent - 6, 2), {R=0, G=0, B=0, A=0}, self._theming.accent)
+            self:_Draw(notificationDrawId .. '_body', 'gradient', nil, 101, 'vertical', notificationOrigin + Vector2.new(2, 2), notificationSize - Vector2.new(4, 4), self._theming.surface0)
+            self:_Draw(notificationDrawId .. '_text', 'text', self._theming.text, 103, notificationOrigin + Vector2.new(self._padding, self._padding + 2), notificationText, true)
             self:_SetOpacityStartsWith(notificationDrawId, notificationFade)
 
             totalNotificationsHeight = totalNotificationsHeight + (notificationTextSize.y + self._padding * 3) * notificationFade
@@ -935,14 +891,14 @@ do
                         end
                     end
 
-                    local choiceColor = choiceFoundIndex and self._theming["Accent"] or self._theming["Disabled Text"]
+                    local choiceColor = choiceFoundIndex and self._theming.accent or self._theming.subtext
                     self:_Draw('dropdown_choice_' .. tostring(i), 'text', choiceColor, 102, choiceOrigin, choice, true)
 
                     totalHeight = totalHeight + labelSize.y + self._padding
                 end
 
-                self:_Draw('dropdown_crust', 'rect', self._theming["Window Background"], 100, dropdownOrigin, Vector2.new(dropdown.width, totalHeight), false)
-                self:_Draw('dropdown_body', 'rect', self._theming["Object Background"], 101, dropdownOrigin + Vector2.new(1, 1), Vector2.new(dropdown.width - 2, totalHeight - 2), true)
+                self:_Draw('dropdown_crust', 'rect', self._theming.crust, 100, dropdownOrigin, Vector2.new(dropdown.width, totalHeight), false)
+                self:_Draw('dropdown_body', 'rect', self._theming.surface0, 101, dropdownOrigin + Vector2.new(1, 1), Vector2.new(dropdown.width - 2, totalHeight - 2), true)
 
                 if clickFrame and shouldCancel then
                     self:_RemoveDropdown()
@@ -966,16 +922,16 @@ do
                 local colorpickerTitle = colorpicker.label
                 local colorpickerTitleSize = self:_GetTextBounds(colorpickerTitle)
 
-                self:_Draw('colorpicker_crust', 'rect', self._theming["Window Background"], 100, colorpickerOrigin, colorpickerSize, false)
-                self:_Draw('colorpicker_body', 'rect', self._theming["Object Background"], 101, colorpickerOrigin + Vector2.new(1, 1), colorpickerSize - Vector2.new(2, 2), true)
-                self:_Draw('colorpicker_body_border_outer', 'rect', self._theming["Object Border"], 103, colorpickerOrigin + Vector2.new(1, 1), colorpickerSize - Vector2.new(2, 2), false)
-                self:_Draw('colorpicker_title', 'text', self._theming["Text"], 104, colorpickerOrigin + Vector2.new(self._padding + 1, self._padding + 2), colorpickerTitle, true)
+                self:_Draw('colorpicker_crust', 'rect', self._theming.crust, 100, colorpickerOrigin, colorpickerSize, false)
+                self:_Draw('colorpicker_body', 'rect', self._theming.surface0, 101, colorpickerOrigin + Vector2.new(1, 1), colorpickerSize - Vector2.new(2, 2), true)
+                self:_Draw('colorpicker_body_border_outer', 'rect', self._theming.border1, 103, colorpickerOrigin + Vector2.new(1, 1), colorpickerSize - Vector2.new(2, 2), false)
+                self:_Draw('colorpicker_title', 'text', self._theming.text, 104, colorpickerOrigin + Vector2.new(self._padding + 1, self._padding + 2), colorpickerTitle, true)
                     
                 local palleteContentPos = colorpickerOrigin + Vector2.new(self._padding + 2, self._padding + colorpickerTitleSize.y + 6)
                 local palleteContentSize = colorpickerSize - Vector2.new(self._padding * 2 + 4, self._padding * 3 + colorpickerTitleSize.y)
 
-                self:_Draw('colorpicker_body_border_inner', 'rect', self._theming["Object Border"], 103, palleteContentPos - Vector2.new(1, 1), palleteContentSize + Vector2.new(2, 2), false)
-                self:_Draw('colorpicker_body_content', 'rect', self._theming["Window Background"], 105, palleteContentPos, palleteContentSize, true)
+                self:_Draw('colorpicker_body_border_inner', 'rect', self._theming.border1, 103, palleteContentPos - Vector2.new(1, 1), palleteContentSize + Vector2.new(2, 2), false)
+                self:_Draw('colorpicker_body_content', 'rect', self._theming.body, 105, palleteContentPos, palleteContentSize, true)
 
                 local mousePos = self:_GetMousePos()
                 local palleteSize = palleteContentSize - Vector2.new(self._padding * 2, self._padding * 2)
@@ -1034,18 +990,18 @@ do
             local menuTitleSize = self:_GetTextBounds(menuTitle)
 
             -- body outer
-            self:_Draw('menu_crust', 'rect', self._theming["Window Background"], 1, Vector2.new(self.x, self.y), Vector2.new(self.w, self.h), false)
-            self:_Draw('menu_body', 'rect', self._theming["Tab Background"], 2, Vector2.new(self.x + 1, self.y + 1), Vector2.new(self.w - 2, self.h - 2), true)
-            self:_Draw('menu_body_border_outer', 'rect', self._theming["Window Border"], 3, Vector2.new(self.x + 1, self.y + 1), Vector2.new(self.w - 2, self.h - 2), false)
-            self:_Draw('menu_title', 'text', self._theming["Text"], 4, Vector2.new(self.x + self._padding + 1, self.y + self._padding + 2), menuTitle, true)
-            self:_Draw('menu_accent_gradient', 'gradient', nil, 4, 'horizontal', Vector2.new(self.x + 2, self.y + 2), Vector2.new(self.w - 4, 2), self._theming["Tab Background"], self._theming["Accent"], self._theming["Tab Background"])
+            self:_Draw('menu_crust', 'rect', self._theming.crust, 1, Vector2.new(self.x, self.y), Vector2.new(self.w, self.h), false)
+            self:_Draw('menu_body', 'rect', self._theming.surface0, 2, Vector2.new(self.x + 1, self.y + 1), Vector2.new(self.w - 2, self.h - 2), true)
+            self:_Draw('menu_body_border_outer', 'rect', self._theming.border1, 3, Vector2.new(self.x + 1, self.y + 1), Vector2.new(self.w - 2, self.h - 2), false)
+            self:_Draw('menu_title', 'text', self._theming.text, 4, Vector2.new(self.x + self._padding + 1, self.y + self._padding + 2), menuTitle, true)
+            self:_Draw('menu_accent_gradient', 'gradient', nil, 4, 'horizontal', Vector2.new(self.x + 2, self.y + 2), Vector2.new(self.w - 4, 2), self._theming.surface0, self._theming.accent, self._theming.surface0)
 
             -- body inner
             local bodyContentPos = Vector2.new(self.x + self._padding + 2, self.y + self._padding + menuTitleSize.y + 6)
             local bodyContentSize = Vector2.new(self.w - self._padding * 2 - 4, self.h - self._padding * 2 - menuTitleSize.y - 8)
 
-            self:_Draw('menu_body_border_inner', 'rect', self._theming["Tab Border"], 11, bodyContentPos - Vector2.new(1, 1), bodyContentSize + Vector2.new(2, 2), false)
-            self:_Draw('menu_body_content', 'rect', self._theming["Tab Background"], 10, bodyContentPos, bodyContentSize, true)
+            self:_Draw('menu_body_border_inner', 'rect', self._theming.border1, 11, bodyContentPos - Vector2.new(1, 1), bodyContentSize + Vector2.new(2, 2), false)
+            self:_Draw('menu_body_content', 'rect', self._theming.body, 10, bodyContentPos, bodyContentSize, true)
 
             -- tabs
             local tabIter = 0
@@ -1057,18 +1013,18 @@ do
                 local tabPosition = Vector2.new(bodyContentPos.x + tabSize.x * tabIter, bodyContentPos.y)
                 local isOpen = self._open_tab == tabName
 
-                        if not isOpen then
-                    self:_Draw(tabDrawId .. '_backdrop', 'gradient', nil, 11, 'vertical', tabPosition, tabSize, self._theming["Tab Toggle Background"])
-                    self:_Draw(tabDrawId .. '_border_b', 'rect', self._theming["Tab Border"], 13, tabPosition + Vector2.new(0, tabSize.y), Vector2.new(tabSize.x, 1), true)
+                if not isOpen then
+                    self:_Draw(tabDrawId .. '_backdrop', 'gradient', nil, 11, 'vertical', tabPosition, tabSize, self._theming.surface1)
+                    self:_Draw(tabDrawId .. '_border_b', 'rect', self._theming.border1, 13, tabPosition + Vector2.new(0, tabSize.y), Vector2.new(tabSize.x, 1), true)
                 else
                     self:_UndrawStartsWith(tabDrawId .. '_backdrop')
                     self:_Undraw(tabDrawId .. '_border_b')
                 end
 
-                self:_Draw(tabDrawId .. '_text', 'text', self._theming["Text"], 13, tabPosition + Vector2.new(tabSize.x/2, tabSize.y/2), tabName, true, 'center')
-
+                self:_Draw(tabDrawId .. '_text', 'text', self._theming.text, 13, tabPosition + Vector2.new(tabSize.x/2, tabSize.y/2), tabName, true, 'center')
+                
                 if tabIter ~= tabCount-1 then
-                    self:_Draw(tabDrawId .. '_border_r', 'rect', self._theming["Tab Border"], 12, tabPosition + Vector2.new(tabSize.x, 0), Vector2.new(1, tabSize.y + 1), true)
+                    self:_Draw(tabDrawId .. '_border_r', 'rect', self._theming.border1, 12, tabPosition + Vector2.new(tabSize.x, 0), Vector2.new(1, tabSize.y + 1), true)
                 end
 
                 if not isOpen and clickFrame and self:_IsMouseWithinBounds(tabPosition, tabSize) then
@@ -1106,7 +1062,7 @@ do
 
                     if isOpen then
                         -- section items
-                        self:_Draw(sectionDrawId .. '_title', 'text', self._theming["Text"], 20, sectionPos + Vector2.new(self._padding, -menuTitleSize.y/2), sectionName, true)          
+                        self:_Draw(sectionDrawId .. '_title', 'text', self._theming.text, 20, sectionPos + Vector2.new(self._padding, -menuTitleSize.y/2), sectionName, true)          
 
                         for sectionItemIter, sectionItem in ipairs(sectionContent._items) do
                             local sectionItemId = sectionDrawId .. '_item_' .. tostring(sectionItemIter)
@@ -1165,7 +1121,7 @@ do
                                         end
                                     end
 
-                                    local keybindColor = itemKeybind.value and self._theming["Text"] or self._theming["Disabled Text"]
+                                    local keybindColor = itemKeybind.value and self._theming.text or self._theming.subtext
                                     self:_Draw(sectionItemId .. '_keybind', 'text', keybindColor, 20, keybindOrigin, keybindText, true, 'left', 10)
                                 elseif itemColorpicker then
                                     local colorpickerSize = Vector2.new(tickSize.x * 2, tickSize.y)
@@ -1206,10 +1162,10 @@ do
 
                                     local tickColor = itemColorpicker.value
                                     self:_Draw(sectionItemId .. '_colorpicker', 'gradient', nil, 20, 'vertical', colorpickerOrigin + Vector2.new(1, 1), colorpickerSize - Vector2.new(2, 2), tickColor)
-                                     self:_Draw(sectionItemId .. '_colorpicker_border', 'rect', self._theming["Object Border"], 21, colorpickerOrigin, colorpickerSize, false)
+                                    self:_Draw(sectionItemId .. '_colorpicker_border', 'rect', self._theming.crust, 21, colorpickerOrigin, colorpickerSize, false)
                                 end
 
-                                local labelColor = sectionItem.unsafe and self._theming["Accent"] or (itemValue and self._theming["Text"] or self._theming["Disabled Text"])
+                                local labelColor = sectionItem.unsafe and self._theming.unsafe or (itemValue and self._theming.text or self._theming.subtext)
                                 if not itemColorpicker or not itemColorpicker.overwrite then
                                     local isHoveringTick = self:_IsMouseWithinBounds(tickOrigin, tickSize)
                                     if isHoveringTick and clickFrame then
@@ -1222,10 +1178,10 @@ do
                                         clickFrame = false
                                     end
 
-                                    local tickColor = itemValue and self._theming["Accent"] or self._theming["Object Background"]
+                                    local tickColor = itemValue and self._theming.accent or self._theming.surface0
                                     self:_Draw(sectionItemId .. '_tick', 'gradient', nil, 20, 'vertical', sectionItemOrigin + Vector2.new(1, 1), tickSize - Vector2.new(2, 2), tickColor)
 
-                                    self:_Draw(sectionItemId .. '_border', 'rect', self._theming["Object Border"], 21, sectionItemOrigin, tickSize, false)
+                                    self:_Draw(sectionItemId .. '_border', 'rect', self._theming.crust, 21, sectionItemOrigin, tickSize, false)
                                 else
                                     labelColor = self._theming.text
                                 end
@@ -1256,16 +1212,16 @@ do
 
                                             local tooltipOrigin = Vector2.new(mousePos.x + 11, mousePos.y)
                                             local tooltipSize = self:_GetTextBounds(sectionItem.tooltip)
-                                            self:_Draw('menu_tooltip_body', 'rect', self._theming["Object Background"], 1000, tooltipOrigin, tooltipSize + Vector2.new(self._padding, self._padding), true)
-                                            self:_Draw('menu_tooltip_crust', 'rect', self._theming["Window Background"], 1001, tooltipOrigin, tooltipSize + Vector2.new(self._padding, self._padding), false)
-                                            self:_Draw('menu_tooltip_border', 'rect', self._theming["Object Border"], 1002, tooltipOrigin + Vector2.new(1, 1), tooltipSize + Vector2.new(self._padding - 2, self._padding - 2), false)
-                                            self:_Draw('menu_tooltip_text', 'text', self._theming["Text"], 1003, tooltipOrigin + Vector2.new(3, tooltipSize.y / 2), sectionItem.tooltip, true)
+                                            self:_Draw('menu_tooltip_body', 'rect', self._theming.surface1, 1000, tooltipOrigin, tooltipSize + Vector2.new(self._padding, self._padding), true)
+                                            self:_Draw('menu_tooltip_crust', 'rect', self._theming.crust, 1001, tooltipOrigin, tooltipSize + Vector2.new(self._padding, self._padding), false)
+                                            self:_Draw('menu_tooltip_border', 'rect', self._theming.border1, 1002, tooltipOrigin + Vector2.new(1, 1), tooltipSize + Vector2.new(self._padding - 2, self._padding - 2), false)
+                                            self:_Draw('menu_tooltip_text', 'text', self._theming.text, 1003, tooltipOrigin + Vector2.new(3, tooltipSize.y / 2), sectionItem.tooltip, true)
                                         end
                                     else
                                         self:_UndrawStartsWith('menu_tooltip')
                                     end
 
-                                    self:_Draw(sectionItemId .. '_hint', 'text', self._theming["Disabled Text"], 21, hintPosition, '(?)', true, 'center', 10)
+                                    self:_Draw(sectionItemId .. '_hint', 'text', self._theming.subtext, 21, hintPosition, '(?)', true, 'center', 10)
                                 end
 
                                 self:_Draw(sectionItemId .. '_label', 'text', labelColor, 20, labelPosition, sectionItem.label, true)
@@ -1302,8 +1258,8 @@ do
                                 local decreaseOrigin = sliderOrigin - Vector2.new(extraPadding + self._padding, labelSize.y - self._padding - 1)
                                 local increaseOrigin = sliderOrigin + Vector2.new(sliderSize.x + self._padding - 4, -labelSize.y + self._padding + 1)
 
-                                self:_Draw(sectionItemId .. '_decrease', 'text', self._theming["Text"], 20, decreaseOrigin + Vector2.new(buttonSize.x/2, buttonSize.y/2), '-', true, 'center')
-                                self:_Draw(sectionItemId .. '_increase', 'text', self._theming["Text"], 20, increaseOrigin + Vector2.new(buttonSize.x/2, buttonSize.y/2), '+', true, 'center')
+                                self:_Draw(sectionItemId .. '_decrease', 'text', self._theming.text, 20, decreaseOrigin + Vector2.new(buttonSize.x/2, buttonSize.y/2), '-', true, 'center')
+                                self:_Draw(sectionItemId .. '_increase', 'text', self._theming.text, 20, increaseOrigin + Vector2.new(buttonSize.x/2, buttonSize.y/2), '+', true, 'center')
                                 if clickFrame then
                                     if self:_IsMouseWithinBounds(decreaseOrigin, buttonSize) then
                                         newValue = clamp(itemValue - sectionItem.step, sectionItem.min, sectionItem.max)
@@ -1323,15 +1279,15 @@ do
                                 end
 
                                 local fillPercent = (itemValue - (sectionItem.min or 0)) / ((sectionItem.max or 1) - (sectionItem.min or 0))
-                                local tickColor = self._theming["Accent"]
+                                local tickColor = self._theming.accent
                                 self:_Draw(sectionItemId .. '_slider', 'gradient', nil, 20, 'vertical', sliderOrigin + Vector2.new(1, 1), Vector2.new(sliderSize.x * fillPercent - 2, sliderSize.y - 2), tickColor)
 
                                 local displayedValue = tostring(itemValue) .. sectionItem.suffix
                                 -- local valueSize = self:_GetTextBounds(displayedValue, nil, 12)
-                                self:_Draw(sectionItemId .. '_value', 'text', self._theming["Text"], 22, sliderOrigin + Vector2.new(sliderSize.x * fillPercent, sliderSize.y), displayedValue, true, 'center', 12)
+                                self:_Draw(sectionItemId .. '_value', 'text', self._theming.text, 22, sliderOrigin + Vector2.new(sliderSize.x * fillPercent, sliderSize.y), displayedValue, true, 'center', 12)
 
-                                self:_Draw(sectionItemId .. '_border', 'rect', self._theming["Object Border"], 21, sliderOrigin, sliderSize, false)
-                                self:_Draw(sectionItemId .. '_label', 'text', self._theming["Text"], 20, sectionItemOrigin + Vector2.new(self._padding + extraPadding, 0), sectionItem.label, true)
+                                self:_Draw(sectionItemId .. '_border', 'rect', self._theming.crust, 21, sliderOrigin, sliderSize, false)
+                                self:_Draw(sectionItemId .. '_label', 'text', self._theming.text, 20, sectionItemOrigin + Vector2.new(self._padding + extraPadding, 0), sectionItem.label, true)
 
                                 sectionHeight = sectionHeight + labelSize.y + sliderSize.y + self._padding * 3
                             elseif itemType == 'dropdown' then
@@ -1354,9 +1310,9 @@ do
                                     clickFrame = false
                                 end
 
-                                local dropdownColor = self._theming["Object Background"]
+                                local dropdownColor = self._theming.surface0
                                 self:_Draw(sectionItemId .. '_list', 'gradient', nil, 20, 'vertical', dropdownOrigin, dropdownSize, dropdownColor)
-                                self:_Draw(sectionItemId .. '_arrow', 'triangle', self._theming["Text"], 21, true,
+                                self:_Draw(sectionItemId .. '_arrow', 'triangle', self._theming.text, 21, true,
                                     dropdownOrigin + Vector2.new(dropdownSize.x - self._padding - 6, dropdownSize.y/2),
                                     dropdownOrigin + Vector2.new(dropdownSize.x - self._padding, dropdownSize.y/2 + 4),
                                     dropdownOrigin + Vector2.new(dropdownSize.x - self._padding, dropdownSize.y/2 - 4)
@@ -1368,10 +1324,10 @@ do
                                     displayedValue = tostring(#itemValue) .. ' item' .. (#itemValue == 1 and '' or 's')
                                 end
 
-                                self:_Draw(sectionItemId .. '_value', 'text', self._theming["Text"], 21, dropdownOrigin + Vector2.new(4, valueSize.y/2 - 2), displayedValue, true)
+                                self:_Draw(sectionItemId .. '_value', 'text', self._theming.text, 21, dropdownOrigin + Vector2.new(4, valueSize.y/2 - 2), displayedValue, true)
 
-                                self:_Draw(sectionItemId .. '_border', 'rect', self._theming["Object Border"], 21, dropdownOrigin, dropdownSize, false)
-                                self:_Draw(sectionItemId .. '_label', 'text', self._theming["Text"], 20, sectionItemOrigin + Vector2.new(self._padding + extraPadding, 0), sectionItem.label, true)
+                                self:_Draw(sectionItemId .. '_border', 'rect', self._theming.crust, 21, dropdownOrigin, dropdownSize, false)
+                                self:_Draw(sectionItemId .. '_label', 'text', self._theming.text, 20, sectionItemOrigin + Vector2.new(self._padding + extraPadding, 0), sectionItem.label, true)
 
                                 sectionHeight = sectionHeight + labelSize.y + dropdownSize.y + self._padding * 3
                             elseif itemType == 'button' then
@@ -1396,16 +1352,16 @@ do
                                 end
 
                                 local isClicked = mouseHeld and self._slider_drag == sectionItemId
-                                local buttonColor = isClicked and self._theming["Window Background"] or self._theming["Object Background"]
-                                local tintColor = isClicked and self._theming["Object Background"] or self._theming["Window Background"]
+                                local buttonColor = isClicked and self._theming.crust or self._theming.surface1
+                                local tintColor = isClicked and self._theming.surface1 or self._theming.crust
                                 self:_Draw(sectionItemId .. '_body', 'gradient', nil, 20, 'vertical', buttonOrigin, buttonSize, buttonColor, Color3.new(
                                     self:_Lerp(buttonColor.R, tintColor.R, 0.5),
                                     self:_Lerp(buttonColor.G, tintColor.G, 0.5),
                                     self:_Lerp(buttonColor.B, tintColor.B, 0.5)
                                 ))
 
-                                self:_Draw(sectionItemId .. '_border', 'rect', self._theming["Object Border"], 21, buttonOrigin, buttonSize, false)
-                                self:_Draw(sectionItemId .. '_text', 'text', self._theming["Text"], 21, buttonOrigin + Vector2.new(buttonSize.x/2, buttonSize.y/2), sectionItem.label, true, 'center')
+                                self:_Draw(sectionItemId .. '_border', 'rect', self._theming.crust, 21, buttonOrigin, buttonSize, false)
+                                self:_Draw(sectionItemId .. '_text', 'text', self._theming.text, 21, buttonOrigin + Vector2.new(buttonSize.x/2, buttonSize.y/2), sectionItem.label, true, 'center')
 
                                 sectionHeight = sectionHeight + buttonSize.y + self._padding * 2
                             elseif itemType == 'textbox' then
@@ -1417,7 +1373,7 @@ do
 
                                 local cursor = math.floor(os.clock() * 2) % 2 == 0 and '|' or ' '
                                 local displayedValue = isTyping and ((itemValue or '') .. cursor) or ((itemValue ~= '' and itemValue or sectionItem.label) .. ' ')
-                                local valueColor = isTyping and self._theming["Text"] or ((itemValue and itemValue ~= '') and self._theming["Text"] or self._theming["Disabled Text"])
+                                local valueColor = isTyping and self._theming.text or ((itemValue and itemValue ~= '') and self._theming.text or self._theming.subtext)
 
                                 if self:_GetTextBounds(displayedValue).x > textboxSize.x then
                                     for i = 1, #displayedValue do
@@ -1498,7 +1454,7 @@ do
                                 end
 
                                 self:_Draw(sectionItemId .. '_input', 'text', valueColor, 22, textboxOrigin + Vector2.new(4, valueSize.y/2 - 2), displayedValue, true)
-                                self:_Draw(sectionItemId .. '_body', 'rect', self._theming["Object Border"], 21, textboxOrigin, textboxSize, true)
+                                self:_Draw(sectionItemId .. '_body', 'rect', self._theming.crust, 21, textboxOrigin, textboxSize, true)
 
                                 sectionHeight = sectionHeight + textboxSize.y + self._padding
                             end
@@ -1518,8 +1474,8 @@ do
                             end
                         end
 
-                        self:_Draw(sectionDrawId .. '_backdrop', 'rect', self._theming["Section Background"], 11, sectionPos, Vector2.new(sectionWidth, sectionHeight), true)
-                        self:_Draw(sectionDrawId .. '_border', 'rect', self._theming["Section Border"], 12, sectionPos, Vector2.new(sectionWidth, sectionHeight), false)
+                        self:_Draw(sectionDrawId .. '_backdrop', 'rect', self._theming.surface0, 11, sectionPos, Vector2.new(sectionWidth, sectionHeight), true)
+                        self:_Draw(sectionDrawId .. '_border', 'rect', self._theming.border0, 12, sectionPos, Vector2.new(sectionWidth, sectionHeight), false)
 
                         if isSectionMirror then
                             totalSectionHeightR = totalSectionHeightR + self._padding
