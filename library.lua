@@ -760,8 +760,6 @@ do
         local menuTitle = self._custom_title_enabled and self._custom_title or self.title
 
         -- input processing
-        local mouseOverMenu = self:_IsMouseWithinBounds(Vector2.new(self.x, self.y), Vector2.new(self.w, self.h))
-        setrobloxinput(not (self._menu_open and mouseOverMenu))
         for keycode, inputData in pairs(self._inputs) do
             local keycodeId = inputData.id
             local interacted = iskeypressed(keycodeId)
